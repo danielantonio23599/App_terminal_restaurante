@@ -39,6 +39,7 @@ public class AtrazadosFragment extends Fragment implements AdapterView.OnItemCli
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_atrazados, container, false);
         listView = (ListView) view.findViewById(R.id.lvAtrazados);
+
         atualizaPedidos();
         return view;
     }
