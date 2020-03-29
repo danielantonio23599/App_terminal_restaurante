@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.daniel.app_terminal_restaurante.R;
 import com.daniel.app_terminal_restaurante.adapter.AdapterPedidos;
+import com.daniel.app_terminal_restaurante.adapter.AdapterPedidosRealizados;
 import com.daniel.app_terminal_restaurante.adapter.holder.Pedido;
 import com.daniel.app_terminal_restaurante.modelo.beans.PreferencesSettings;
 import com.daniel.app_terminal_restaurante.modelo.beans.SharedPreferencesEmpresa;
@@ -35,50 +36,93 @@ public class RealizadosFragment extends Fragment implements AdapterView.OnItemCl
     private ArrayList<Pedido> pp;
     private AlertDialog alerta;
     private ListView listView;
-    public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
+    private volatile Thread timer;
+    private boolean para = true;
+
+    public void stop() {
+        para = false;
+        onDestroy();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (timer != null) {
+            timer.interrupt();
+        }
+    }
+
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_realizados, container, false);
         listView = (ListView) view.findViewById(R.id.lvRealizados);
-        atualizaPedidos();
         return view;
     }
 
-    private void atualizaPedidos() {
-        Log.i("[IFMG]", "faz login");
-        mostraDialog();
-        RestauranteAPI api = SyncDefaut.RETROFIT_RESTAURANTE.create(RestauranteAPI.class);
-        SharedPreferencesEmpresa s = PreferencesSettings.getAllPreferences(getActivity().getBaseContext());
-        final Call<ArrayList<Pedido>> call = api.listarPedidosRealizados(s.getEmpEmail(), s.getEmpSenha() + "");
+    @Override
+    public void onResume() {
+        super.onResume();
+        atualizarFragment();
+    }
 
-        call.enqueue(new Callback<ArrayList<Pedido>>() {
+    public void atualizarFragment() {
+
+        Log.i("[IFMG]", "chamou atualizarFragmanet");
+        timer = new Thread(new Runnable() {
             @Override
-            public void onResponse(Call<ArrayList<Pedido>> call, Response<ArrayList<Pedido>> response) {
-                if (response.code() == 200) {
-                    String auth = response.headers().get("auth");
-
-                    if (auth.equals("1")) {
-                        escondeDialog();
-                        ArrayList<Pedido> u = response.body();
-                        atualizaTabela(u);
-                    } else {
-                        escondeDialog();
-                        Toast.makeText(getActivity().getBaseContext(), "Nome de usuário ou senha incorretos", Toast.LENGTH_SHORT).show();
+            public void run() {
+                //TODO your background code
+                while (para) {
+                    atualizaPedidos();
+                    try {
+                        Thread.sleep(60000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                } else {
-                    escondeDialog();
-                    Toast.makeText(getActivity().getBaseContext(), "Erro ao fazer login, erro servidor", Toast.LENGTH_SHORT).show();
-                    Log.i("[IFMG]", "t1: " + response.code());
                 }
             }
-
-            @Override
-            public void onFailure(Call<ArrayList<Pedido>> call, Throwable t) {
-                escondeDialog();
-                Toast.makeText(getActivity().getBaseContext(), "Erro ao fazer login, falhaaaaa", Toast.LENGTH_SHORT).show();
-                Log.i("[IFMG]", "faz login");
-                Log.i("Teste", "t2: " + t.getMessage());
-                //mudaActivity(MainActivity.class);
-            }
         });
+        timer.start();
+    }
+
+    private void atualizaPedidos() {
+        if (getActivity() != null) {
+            Log.i("[IFMG]", "faz selveti buscando pedidos realizados");
+            // mostraDialog();
+            RestauranteAPI api = SyncDefaut.RETROFIT_RESTAURANTE(getContext()).create(RestauranteAPI.class);
+            SharedPreferencesEmpresa s = PreferencesSettings.getAllPreferences(getActivity().getBaseContext());
+            final Call<ArrayList<Pedido>> call = api.listarPedidosRealizados(s.getEmpEmail(), s.getEmpSenha() + "");
+
+            call.enqueue(new Callback<ArrayList<Pedido>>() {
+                @Override
+                public void onResponse(Call<ArrayList<Pedido>> call, Response<ArrayList<Pedido>> response) {
+                    if (response.code() == 200) {
+                        String auth = response.headers().get("auth");
+
+                        if (auth.equals("1")) {
+                            // escondeDialog();
+                            ArrayList<Pedido> u = response.body();
+                            atualizaTabela(u);
+                        } else {
+                            //escondeDialog();
+                            Toast.makeText(getActivity().getBaseContext(), "Nome de usuário ou senha incorretos", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        //escondeDialog();
+                        Toast.makeText(getActivity().getBaseContext(), "Erro ao fazer login, erro servidor", Toast.LENGTH_SHORT).show();
+                        Log.i("[IFMG]", "t1: " + response.code());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<Pedido>> call, Throwable t) {
+                    //escondeDialog();
+                    Toast.makeText(getActivity().getBaseContext(), "Erro ao fazer login, falhaaaaa", Toast.LENGTH_SHORT).show();
+                    Log.i("[IFMG]", "faz login");
+                    Log.i("Teste", "t2: " + t.getMessage());
+                    //mudaActivity(MainActivity.class);
+                }
+            });
+        }
     }
 
     private void mostraDialog() {
@@ -86,7 +130,7 @@ public class RealizadosFragment extends Fragment implements AdapterView.OnItemCl
         //inflamos o layout alerta.xml na view
         View view = li.inflate(R.layout.alert_progress, null);
         TextView tvDesc = (TextView) view.findViewById(R.id.tvDesc);    //definimos para o botão do layout um clickListener
-        tvDesc.setText("Fazendo Login...");
+        tvDesc.setText("Buscando pedidos Realizados...");
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Aguarde...");
         builder.setView(view);
@@ -103,7 +147,7 @@ public class RealizadosFragment extends Fragment implements AdapterView.OnItemCl
 
     public void atualizaTabela(ArrayList<Pedido> pedidos) {
         Log.i("[IFMG]", "pedidos: " + pedidos.size());
-        AdapterPedidos s = new AdapterPedidos(getActivity());
+        AdapterPedidosRealizados s = new AdapterPedidosRealizados(getActivity());
         if (pedidos.size() > 0) {
             s.setLin(pedidos);
             listView.setAdapter(s);

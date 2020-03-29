@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,10 +20,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 import com.daniel.app_terminal_restaurante.modelo.beans.PreferencesSettings;
+import com.daniel.app_terminal_restaurante.modelo.beans.Servidor;
 import com.daniel.app_terminal_restaurante.modelo.beans.SharedPreferencesEmpresa;
+import com.daniel.app_terminal_restaurante.modelo.persistencia.BdServidor;
 import com.daniel.app_terminal_restaurante.sync.RestauranteAPI;
 import com.daniel.app_terminal_restaurante.sync.SyncDefaut;
 import com.daniel.app_terminal_restaurante.util.PermissionUtils;
+import com.daniel.app_terminal_restaurante.util.TecladoUtil;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,8 +40,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText userEmail, user_pwd;
     private Button buttonLogin;
-    private TextView tvSign_up;
+    private ImageButton buttonConf;
     private AlertDialog alerta;
+    private AlertDialog alerta2;
+    EditText ip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,74 +52,46 @@ public class LoginActivity extends AppCompatActivity {
         //mostraDialog();
         setContentView(R.layout.activity_login);
 
-        tvSign_up = (TextView) findViewById(R.id.tvSign_up);
         userEmail = (EditText) findViewById(R.id.input_email);
         user_pwd = (EditText) findViewById(R.id.input_senha);
         buttonLogin = (Button) findViewById(R.id.btnLogin);
-
+        buttonConf = (ImageButton) findViewById(R.id.btnConf);
         //todo validar todas as permissões de uma vez aqui
-        String[] permissoes = new String[]{
-                android.Manifest.permission.INTERNET,
-                Manifest.permission.ACCESS_NETWORK_STATE
-        };
-        PermissionUtils.validate(this, 0, permissoes);
-
 
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Todo Verificar credenciais e rodar SplashScreen
-                fazLogin(userEmail.getText() + "", user_pwd.getText() + "");
-                //Com MD5: -> Cadastrar Adm com MD5
+                    fazLogin(userEmail.getText() + "", user_pwd.getText() + "");
+                    //Com MD5: -> Cadastrar Adm com MD5
 //                fazLogin(userName.getText() + "", StringUtils.md5(user_pwd.getText() + ""));
 
             }
         });
-
-        tvSign_up.setOnClickListener(new View.OnClickListener() {
-
-            @SuppressLint("ResourceAsColor")
+        buttonConf.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                tvSign_up.setPaintFlags(tvSign_up.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-                tvSign_up.setTextColor(R.color.colorAccent);
-                mudaActivity(PedidosActivity.class);
-
+            public void onClick(View view) {
+                showConfg();
             }
         });
 
+
     }
 
-    /*@Override
-    protected void onResume() {
-        super.onResume();
-        CategoriaControle ca = new CategoriaControle(getApplicationContext());
-        if (ca.listarCategorias().size() == 0) {
-            //PovoamentoBD.povoar(getApplicationContext());
-            Log.i("[IFMG]", "povoamento");
-        }
-        Usuario u = settings.getAllPreferences(getBaseContext());
-
-        if (!u.getNome().equals("")) {
-            Log.i("[IFMG]", "usuario" + u.getId());
-            mudaActivity(MainActivity.class);
-        }
-
-    }*/
-
-    private void mudaActivity(Class classe) {
+    private void mudaActivity(final Class classe) {
         Log.i("[IFMG]", "passou no muda actyvity" + classe.getName());
-        Intent intent = new Intent(this, classe);
+        final Intent intent = new Intent(this, classe);
         startActivity(intent);
         finish();
 
     }
 
+
     public void fazLogin(String nomeUsuario, String senha) {
         Log.i("[IFMG]", "faz login");
         mostraDialog();
 
-        RestauranteAPI api = SyncDefaut.RETROFIT_RESTAURANTE.create(RestauranteAPI.class);
+        RestauranteAPI api = SyncDefaut.RETROFIT_RESTAURANTE(getApplicationContext()).create(RestauranteAPI.class);
 
         final Call<SharedPreferencesEmpresa> call = api.fazLoginEmpresa(nomeUsuario, senha);
 
@@ -124,11 +102,19 @@ public class LoginActivity extends AppCompatActivity {
                     String auth = response.headers().get("auth");
 
                     if (auth.equals("1")) {
-                        escondeDialog();
                         SharedPreferencesEmpresa u = response.body();
                         //Preference Settings ==============================================
                         PreferencesSettings.updateAllPreferences(getBaseContext(), u);
-                        mudaActivity(PedidosActivity.class);
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        escondeDialog();
+
+                        mudaActivity(MainActivity.class);
+
+
                     } else {
                         escondeDialog();
                         Toast.makeText(getBaseContext(), "Nome de usuário ou senha incorretos", Toast.LENGTH_SHORT).show();
@@ -171,4 +157,37 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    public void showConfg() {
+        //LayoutInflater é utilizado para inflar nosso layout em uma view.
+        //-pegamos nossa instancia da classe
+        final LayoutInflater li = getLayoutInflater();
+
+        //inflamos o layout alerta.xml na view
+        final View view = li.inflate(R.layout.alert_settings, null);
+        ip = (EditText) view.findViewById(R.id.etIP);
+        //definimos para o botão do layout um clickListener
+        Button ok = (Button) view.findViewById(R.id.btnOk);
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TecladoUtil.hideKeyboard(getApplication(), view);
+                BdServidor bd = new BdServidor(getApplication());
+                Servidor s = new Servidor();
+                s.setIp(ip.getText() + "");
+                bd.insert(s);
+                alerta2.dismiss();
+            }
+        });
+        Button cancelar = (Button) view.findViewById(R.id.btnCancelar);
+        cancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alerta2.dismiss();
+            }
+        });
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(view);
+        alerta2 = builder.create();
+        alerta2.show();
+    }
 }

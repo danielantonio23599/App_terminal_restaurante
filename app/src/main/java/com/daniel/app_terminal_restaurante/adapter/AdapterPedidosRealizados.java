@@ -23,7 +23,7 @@ import java.util.List;
  * Created by Daniel on 30/05/2018.
  */
 
-public class AdapterPedidos extends BaseAdapter {
+public class AdapterPedidosRealizados extends BaseAdapter {
     private List<Pedido> lin = new ArrayList<Pedido>();
 
     public List<Pedido> getLin() {
@@ -36,7 +36,7 @@ public class AdapterPedidos extends BaseAdapter {
 
     private Context context;
 
-    public AdapterPedidos(Context context) {
+    public AdapterPedidosRealizados(Context context) {
         this.context = context;
     }
 
@@ -73,7 +73,7 @@ public class AdapterPedidos extends BaseAdapter {
         tempo_preparo.setText(lin.get(position).getTempo_preparo());
         observacao.setText(lin.get(position).getObservacao());
         quantidade.setText(lin.get(position).getQuantidade() + "");
-        tempoEspera.setText(Time.subtrairHoras(lin.get(position).getHora_pedido()));
+        tempoEspera.setText(Time.subtrairHoras(lin.get(position).getHora_final(),lin.get(position).getHora_pedido()));
         mesa.setText(lin.get(position).getMesa() + "");
         return view;
     }
