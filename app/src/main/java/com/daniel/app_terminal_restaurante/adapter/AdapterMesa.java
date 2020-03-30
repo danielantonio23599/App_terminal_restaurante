@@ -1,0 +1,89 @@
+package com.daniel.app_terminal_restaurante.adapter;
+
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.graphics.Color;
+import android.os.Build;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
+import android.widget.TextView;
+
+import androidx.annotation.ColorRes;
+import androidx.annotation.RequiresApi;
+import androidx.cardview.widget.CardView;
+
+import com.daniel.app_terminal_restaurante.R;
+import com.daniel.app_terminal_restaurante.adapter.holder.Mesa;
+import com.daniel.app_terminal_restaurante.adapter.holder.Pedido;
+import com.daniel.app_terminal_restaurante.util.Time;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by Daniel on 30/05/2018.
+ */
+
+public class AdapterMesa extends BaseAdapter {
+    private List<Mesa> lin = new ArrayList<Mesa>();
+
+    public List<Mesa> getLin() {
+        return lin;
+    }
+
+    public void setLin(List<Mesa> lin) {
+        this.lin = lin;
+    }
+
+    private Context context;
+
+    public AdapterMesa(Context context) {
+        this.context = context;
+    }
+
+    @Override
+    public int getCount() {
+        return lin.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return lin.get(position);
+    }
+
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @SuppressLint("ResourceAsColor")
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        Log.i("[IFMG]", "view: " + lin.get(position).getNumero());
+        View view = LayoutInflater.from(context).inflate(R.layout.mesa_adapter, parent, false);
+        TextView mesa = (TextView) view.findViewById(R.id.tvMesa);
+        CardView back = (CardView) view.findViewById(R.id.back);
+        mesa.setText(lin.get(position).getNumero() + "");
+        switch (lin.get(position).getStatus()) {
+            case "aberta":
+                back.setBackgroundColor(R.color.color_green);
+                break;
+            case "fechada":
+                back.setBackgroundColor(R.color.color_red);
+                break;
+            case "pendente":
+                back.setBackgroundColor(R.color.color_yellou);
+                break;
+            default:
+                back.setBackgroundColor(R.color.color_green);
+                break;
+        }
+        return view;
+    }
+}
