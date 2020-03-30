@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 
+import com.daniel.app_terminal_restaurante.fragment.MesasFragment;
 import com.daniel.app_terminal_restaurante.fragment.PendentesFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -74,8 +75,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mudaActivity(PedidosActivity.class);
             //replaceFragment(new PendentesFragment());
         } else if (id == R.id.nav_realizado) {
-
-            //replaceFragment(new PesquisarLinhaFragment());
+            replaceFragment(new MesasFragment());
 
 
         }

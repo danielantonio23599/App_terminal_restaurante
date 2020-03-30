@@ -1,5 +1,6 @@
 package com.daniel.app_terminal_restaurante.sync;
 
+import com.daniel.app_terminal_restaurante.adapter.holder.Mesa;
 import com.daniel.app_terminal_restaurante.adapter.holder.Pedido;
 import com.daniel.app_terminal_restaurante.modelo.beans.Produtos;
 import com.daniel.app_terminal_restaurante.modelo.beans.ProdutosGravados;
@@ -29,5 +30,8 @@ public interface RestauranteAPI {
     @FormUrlEncoded
     @POST("restaurante_server/ListarPedidosRealizados")
     Call<ArrayList<Pedido>> listarPedidosRealizados(@Field("nomeUsuario") String nomeUsuario, @Field("senha") String senha);
+    @FormUrlEncoded
+    @POST("restaurante_server/ListarMesasAbertas")
+    Call<ArrayList<Mesa>> getMesasAbertas(@Field("nomeUsuario") String nomeUsuario, @Field("senha") String senha);
 
 }
