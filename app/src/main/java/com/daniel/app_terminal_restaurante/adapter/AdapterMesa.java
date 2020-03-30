@@ -2,6 +2,7 @@ package com.daniel.app_terminal_restaurante.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
@@ -65,23 +66,25 @@ public class AdapterMesa extends BaseAdapter {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.i("[IFMG]", "view: " + lin.get(position).getNumero());
+        Log.i("[IFMG]", "view: " + lin.get(position).getMesa());
         View view = LayoutInflater.from(context).inflate(R.layout.mesa_adapter, parent, false);
         TextView mesa = (TextView) view.findViewById(R.id.tvMesa);
         CardView back = (CardView) view.findViewById(R.id.back);
-        mesa.setText(lin.get(position).getNumero() + "");
+        mesa.setText(lin.get(position).getMesa() + "");
+        Log.i("[IFMG]", "status : " + lin.get(position).getStatus());
         switch (lin.get(position).getStatus()) {
             case "aberta":
-                back.setBackgroundColor(R.color.color_green);
+                Log.i("[IFMG]", " aberta ");
+                back.setCardBackgroundColor(0xFF07935B);
                 break;
             case "fechada":
-                back.setBackgroundColor(R.color.color_red);
+                back.setCardBackgroundColor(Color.RED);
                 break;
             case "pendente":
-                back.setBackgroundColor(R.color.color_yellou);
+                back.setBackgroundColor(Color.YELLOW);
                 break;
             default:
-                back.setBackgroundColor(R.color.color_green);
+                back.setCardBackgroundColor(0xFF07935B);
                 break;
         }
         return view;

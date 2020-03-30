@@ -1,7 +1,7 @@
 package com.daniel.app_terminal_restaurante.adapter.holder;
 
 public class Mesa {
-    private int numero;
+    private int mesa;
     private int venda;
     private Float valor;
     private int caixa;
@@ -31,12 +31,12 @@ public class Mesa {
         this.caixa = caixa;
     }
 
-    public int getNumero() {
-        return numero;
+    public int getMesa() {
+        return mesa;
     }
 
-    public void setNumero(int numero) {
-        this.numero = numero;
+    public void setMesa(int mesa) {
+        this.mesa = mesa;
     }
 
     public String getStatus() {

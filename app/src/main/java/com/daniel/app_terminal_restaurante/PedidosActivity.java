@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,8 +48,8 @@ public class PedidosActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedidos);
-
-        content = (ViewPager) findViewById(R.id.viewpager);//!!!!!!!!!!!!!!!!!!!
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        content = (ViewPager) findViewById(R.id.viewpager);
         //Todo Método para colocar fragment no view pager
         Log.i("IFMG", "onCeate");
         //cria adapter para tabs(para jogar no ViewPager)
@@ -64,7 +65,7 @@ public class PedidosActivity extends AppCompatActivity {
         content.setAdapter(adapter);  //seta adapter
         //seta enventos do PagerView para com ButtonNav
         content.setOnPageChangeListener(onPageChangeListener);
-        content.setCurrentItem(0);
+        content.setCurrentItem(1);
 
 
     }

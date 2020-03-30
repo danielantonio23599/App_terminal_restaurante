@@ -32,7 +32,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/buenard"
                         android:hint="Numero da mesa"
-                        android:inputType="@string/CODIGO"
+                        android:inputType="number"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp" />
 
@@ -52,6 +52,7 @@
         android:id="@+id/lvMesas"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@android:color/transparent"
         android:numColumns="4"
         android:stretchMode="columnWidth">
 

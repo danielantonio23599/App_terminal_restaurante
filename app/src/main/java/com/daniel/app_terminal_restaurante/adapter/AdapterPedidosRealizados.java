@@ -59,7 +59,7 @@ public class AdapterPedidosRealizados extends BaseAdapter {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.i("[IFMG]", "view: " + lin.get(position).getProduto());
+        Log.i("[IFMG]", "view r : " + lin.get(position).getProduto());
         View view = LayoutInflater.from(context).inflate(R.layout.pedidos_adapter, parent, false);
         TextView produto = (TextView) view.findViewById(R.id.tvProduto);
         TextView tempo_preparo = (TextView) view.findViewById(R.id.tvTempoPreparo);
