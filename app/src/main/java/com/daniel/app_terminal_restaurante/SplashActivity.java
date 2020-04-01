@@ -44,7 +44,12 @@ public class SplashActivity extends AppCompatActivity {
                 Manifest.permission.ACCESS_NETWORK_STATE
         };
         PermissionUtils.validate(this, 0, permissoes);
-
+        BdServidor bd = new BdServidor(getApplication());
+        if (bd.listar().getCodigo() == 0) {
+            Servidor s = new Servidor();
+            s.setIp("192.168.0.4");
+            bd.insert(s);
+        }
         //cria delay para entrar na proxima activity
         new Handler().postDelayed(
                 new Runnable() {
@@ -72,12 +77,7 @@ public class SplashActivity extends AppCompatActivity {
         //método que será executado em outra thread
         @Override
         protected String doInBackground(String... args) {
-            BdServidor bd = new BdServidor(getApplication());
-            if (bd.listar().getCodigo() == 0) {
-                Servidor s = new Servidor();
-                s.setIp("192.168.0.4");
-                bd.insert(s);
-            }
+
             return null;
         }
 

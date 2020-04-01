@@ -48,9 +48,8 @@ public class BdServidor {
     public void deleteAll() {
 
         // deleta todas informações da tabela usando script sql
-        db.execSQL("DELETE FROM acesslog;");
-        db.close();
-        dbr.close();
+        db.execSQL("DELETE FROM servidor;");
+
     }
 
 
@@ -71,9 +70,6 @@ public class BdServidor {
             linha.setIp(cursor.getString(1));
         }
         while (cursor.moveToNext()); // Enquanto o usuario pode mover para o proximo ele executa esse metodo
-
-        db.close();
-        dbr.close();
         // Retorna a lista
         return linha;
     }
