@@ -9,16 +9,16 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SyncDefaut {
-    private static String ip = "192.168.0.4";
+    private static String ip = "192.168.0.5";
     private String url;
 
     public static String getUrl(Context c) {
         BdServidor bd = new BdServidor(c);
         String ip = bd.listar().getIp();
         if (!ip.equals("")) {
-            return "http://" + ip + ":8089/RestauranteServer/";
+            return "http://" + ip + ":8080/RestauranteServer/";
         } else {
-            return "http://" + "192.168.0.4" + ":8089/RestauranteServer/";
+            return "http://" + "192.168.0.4" + ":8080/RestauranteServer/";
         }
     }
 

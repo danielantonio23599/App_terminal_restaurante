@@ -25,6 +25,7 @@ import com.daniel.app_terminal_restaurante.modelo.beans.SharedPreferencesEmpresa
 import com.daniel.app_terminal_restaurante.modelo.persistencia.BdServidor;
 import com.daniel.app_terminal_restaurante.sync.RestauranteAPI;
 import com.daniel.app_terminal_restaurante.sync.SyncDefaut;
+import com.daniel.app_terminal_restaurante.util.Criptografia;
 import com.daniel.app_terminal_restaurante.util.PermissionUtils;
 import com.daniel.app_terminal_restaurante.util.TecladoUtil;
 
@@ -62,8 +63,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //Todo Verificar credenciais e rodar SplashScreen
-                    fazLogin(userEmail.getText() + "", user_pwd.getText() + "");
-                    //Com MD5: -> Cadastrar Adm com MD5
+                fazLogin(userEmail.getText() + "", Criptografia.criptografar(user_pwd.getText() + ""));
+                //Com MD5: -> Cadastrar Adm com MD5
 //                fazLogin(userName.getText() + "", StringUtils.md5(user_pwd.getText() + ""));
 
             }

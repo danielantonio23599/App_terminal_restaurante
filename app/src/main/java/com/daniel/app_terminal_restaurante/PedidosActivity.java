@@ -22,9 +22,9 @@ import androidx.viewpager.widget.ViewPager;
 public class PedidosActivity extends AppCompatActivity {
     private ViewPager content;
     private Toast toast;
+    private long lastBackPressTime = 0;
     private PendentesFragment l;
     private RealizadosFragment r;
-    private long lastBackPressTime = 0;
     private AlertDialog alerta;
     private BottomNavigationView navigation;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener

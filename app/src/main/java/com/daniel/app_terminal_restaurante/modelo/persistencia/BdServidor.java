@@ -38,10 +38,14 @@ public class BdServidor {
         values.put("serIp", linha.getIp());
         //inserindo diretamente na tabela sem a necessidade de script sql
         long r = db.insert("servidor", null, values);
-        db.close();
-        dbr.close();
+
         return r;
 
+    }
+
+    public void close() {
+        db.close();
+        dbr.close();
     }
 
 
